@@ -41,3 +41,35 @@
         overflow-x: hidden;
     }
 </style>
+
+<script is:inline>
+/** --------------------------------------------------------------------
+ * tooltips Bootstrap
+--------------------------------------------------------------------- */
+function tooltipsBootstrap() {
+    // Seleciona apenas elementos que tenham o atributo title ou data-bs-title preenchidos
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"][title]:not([title=""]), [data-bs-toggle="tooltip"][data-bs-title]:not([data-bs-title=""])');
+
+    const tooltipList = [...tooltipTriggerList].map((tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl));
+
+    tooltipList.forEach((tooltip, index) => {
+        tooltipTriggerList[index].addEventListener('click', () => {
+            tooltip.hide();
+        });
+    });
+}
+
+/** --------------------------------------------------------------------
+ * popovers Bootstrap
+--------------------------------------------------------------------- */
+function popoversBootstrap() {
+    const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+    const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+}
+
+/** --------------------------------------------------------------------
+ * init functions
+--------------------------------------------------------------------- */
+tooltipsBootstrap();
+popoversBootstrap();
+</script>

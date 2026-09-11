@@ -80,6 +80,27 @@
     align-items: center;
 }
 
+.kanban-card .card-actions {
+    margin-top: .4rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.kanban-card .card-actions button {
+    text-decoration: none;
+    line-height: 1;
+    font-size: .85rem;
+    color: #6c757d;
+}
+
+.kanban-card .card-actions button:hover {
+    color: #212529;
+}
+
+.kanban-card .card-actions .text-danger:hover {
+    color: #dc3545 !important;
+}
+
 /* Placeholder que marca onde o card vai cair */
 .drop-placeholder {
     border: 2px dashed #adb5bd;
