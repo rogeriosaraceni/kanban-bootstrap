@@ -1,0 +1,257 @@
+---
+import "./style.css";
+import Modal from "./Modal.astro";
+---
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="mb-0"><i class="bi bi-kanban me-2"></i>Quadro Kanban</h4>
+    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalNovaTarefa">
+        <i class="bi bi-plus-lg me-1"></i>Nova Tarefa
+    </button>
+</div>
+
+<div class="kanban-board" id="kanbanBoard">
+    <div class="kanban-column" data-status="todo">
+        <div class="kanban-column-header">
+            <span><i class="bi bi-circle text-secondary me-1"></i>A Fazer</span>
+            <span class="badge bg-secondary rounded-pill js-count">0</span>
+        </div>
+        <div class="kanban-list" data-status="todo">
+            <div class="kanban-card priority-alta" data-priority="alta" data-id="102" draggable="true">
+                <div class="card-title">Ajustar layout responsivo do dashboard</div>
+                <div class="card-meta">
+                    <span><i class="bi bi-flag-fill text-danger"></i> Alta</span>
+                    <span>#102</span>
+                </div>
+            </div>
+
+            <div class="kanban-card priority-media" data-priority="media" data-id="108" draggable="true">
+                <div class="card-title">Criar máscara de CNPJ alfanumérico</div>
+                <div class="card-meta">
+                    <span><i class="bi bi-flag-fill text-warning"></i> Média</span>
+                    <span>#108</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="kanban-column" data-status="doing">
+        <div class="kanban-column-header">
+            <span><i class="bi bi-arrow-repeat text-primary me-1"></i>Em Andamento</span>
+            <span class="badge bg-secondary rounded-pill js-count">0</span>
+        </div>
+        <div class="kanban-list" data-status="doing">
+            <div class="kanban-card priority-alta" data-priority="alta" data-id="95" draggable="true">
+                <div class="card-title">Corrigir bug do FullCalendar em rota de salvamento</div>
+                <div class="card-meta">
+                    <span><i class="bi bi-flag-fill text-danger"></i> Alta</span>
+                    <span>#095</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="kanban-column" data-status="review">
+        <div class="kanban-column-header">
+            <span><i class="bi bi-eye text-warning me-1"></i>Em Revisão</span>
+            <span class="badge bg-secondary rounded-pill js-count">0</span>
+        </div>
+        <div class="kanban-list" data-status="review">
+            <div class="kanban-card priority-baixa" data-priority="baixa" data-id="111" draggable="true">
+                <div class="card-title">Documentar plugin bootstrap-imgdrop v2.0.0</div>
+                <div class="card-meta">
+                    <span><i class="bi bi-flag-fill text-success"></i> Baixa</span>
+                    <span>#111</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="kanban-column" data-status="done">
+        <div class="kanban-column-header">
+            <span><i class="bi bi-check-circle text-success me-1"></i>Concluído</span>
+            <span class="badge bg-secondary rounded-pill js-count">0</span>
+        </div>
+        <div class="kanban-list" data-status="done">
+            <div class="kanban-card priority-media" data-priority="media" data-id="87" draggable="true">
+                <div class="card-title">Migrar amCharts 3 para amCharts 5</div>
+                <div class="card-meta">
+                    <span><i class="bi bi-flag-fill text-warning"></i> Média</span>
+                    <span>#087</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Tarefa -->
+<Modal />
+
+<script is:inline>
+    (function () {
+        "use strict";
+
+        var board = document.getElementById("kanbanBoard");
+        var listas = board.querySelectorAll(".kanban-list");
+        var colunas = board.querySelectorAll(".kanban-column");
+        var contadorId = 200;
+        var cardArrastado = null;
+        var placeholder = document.createElement("div");
+        placeholder.className = "drop-placeholder";
+
+        function atualizarContadores() {
+            colunas.forEach(function (coluna) {
+                var status = coluna.dataset.status;
+                var lista = coluna.querySelector('.kanban-list[data-status="' + status + '"]');
+                var qtd = lista.querySelectorAll(".kanban-card").length;
+                coluna.querySelector(".js-count").textContent = qtd;
+            });
+        }
+
+        function limparPlaceholder() {
+            if (placeholder.parentNode) {
+                placeholder.parentNode.removeChild(placeholder);
+            }
+        }
+
+        // --- Eventos de cada card (dragstart / dragend) ---
+        function ligarEventosCard(card) {
+            card.addEventListener("dragstart", function (e) {
+                cardArrastado = card;
+                e.dataTransfer.effectAllowed = "move";
+                e.dataTransfer.setData("text/plain", card.dataset.id || "");
+                // Pequeno delay pra classe visual não "sumir" o card antes do navegador tirar o print do drag
+                setTimeout(function () {
+                    card.classList.add("dragging");
+                }, 0);
+            });
+
+            card.addEventListener("dragend", function () {
+                card.classList.remove("dragging");
+                limparPlaceholder();
+                cardArrastado = null;
+            });
+        }
+
+        board.querySelectorAll(".kanban-card").forEach(ligarEventosCard);
+
+        // --- Eventos de cada lista (coluna) ---
+        listas.forEach(function (lista) {
+            lista.addEventListener("dragover", function (e) {
+                e.preventDefault(); // necessário para permitir o drop
+                e.dataTransfer.dropEffect = "move";
+
+                var coluna = lista.closest(".kanban-column");
+                coluna.classList.add("drag-over");
+
+                var elementoApos = elementoDepoisDoCursor(lista, e.clientY);
+
+                if (elementoApos == null) {
+                    lista.appendChild(placeholder);
+                } else {
+                    lista.insertBefore(placeholder, elementoApos);
+                }
+            });
+
+            lista.addEventListener("dragleave", function (e) {
+                // Só remove o destaque se realmente saiu da coluna (não de um filho)
+                if (!lista.contains(e.relatedTarget)) {
+                    lista.closest(".kanban-column").classList.remove("drag-over");
+                }
+            });
+
+            lista.addEventListener("drop", function (e) {
+                e.preventDefault();
+
+                var coluna = lista.closest(".kanban-column");
+                coluna.classList.remove("drag-over");
+
+                if (cardArrastado) {
+                    lista.insertBefore(cardArrastado, placeholder);
+                    limparPlaceholder();
+
+                    var novoStatus = lista.dataset.status;
+                    cardArrastado.dataset.statusAtual = novoStatus;
+
+                    atualizarContadores();
+
+                    // Ponto de integração com o backend ASP:
+                    // fetch('/salvar-status-tarefa.asp', {
+                    //     method: 'POST',
+                    //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    //     body: 'id=' + encodeURIComponent(cardArrastado.dataset.id) + '&status=' + encodeURIComponent(novoStatus)
+                    // });
+                }
+            });
+        });
+
+        // Descobre sobre qual card o cursor está, pra saber onde inserir o placeholder
+        function elementoDepoisDoCursor(lista, y) {
+            var cardsElegiveis = Array.prototype.slice.call(lista.querySelectorAll(".kanban-card:not(.dragging)"));
+
+            return cardsElegiveis.reduce(
+                function (maisProximo, card) {
+                    var caixa = card.getBoundingClientRect();
+                    var deslocamento = y - caixa.top - caixa.height / 2;
+
+                    if (deslocamento < 0 && deslocamento > maisProximo.deslocamento) {
+                        return { deslocamento: deslocamento, elemento: card };
+                    }
+                    return maisProximo;
+                },
+                { deslocamento: Number.NEGATIVE_INFINITY, elemento: null },
+            ).elemento;
+        }
+
+        // --- Criação de novo card via modal ---
+        function criarCardElemento(titulo, prioridade, id) {
+            var iconeClasse = { alta: "text-danger", media: "text-warning", baixa: "text-success" }[prioridade];
+            var labelPrioridade = { alta: "Alta", media: "Média", baixa: "Baixa" }[prioridade];
+
+            var card = document.createElement("div");
+            card.className = "kanban-card priority-" + prioridade;
+            card.dataset.priority = prioridade;
+            card.dataset.id = id;
+            card.draggable = true;
+
+            card.innerHTML = '<div class="card-title"></div>' + '<div class="card-meta">' + '<span><i class="bi bi-flag-fill ' + iconeClasse + '"></i> ' + labelPrioridade + "</span>" + "<span>#" + id + "</span>" + "</div>";
+
+            card.querySelector(".card-title").textContent = titulo;
+
+            ligarEventosCard(card);
+            return card;
+        }
+
+        document.getElementById("btnSalvarTarefa").addEventListener("click", function () {
+            var inputTitulo = document.getElementById("inputTituloTarefa");
+            var titulo = inputTitulo.value.trim();
+            var prioridade = document.getElementById("selectPrioridadeTarefa").value;
+            var colunaSelecionada = document.getElementById("selectColunaTarefa").value;
+
+            if (!titulo) {
+                inputTitulo.classList.add("is-invalid");
+                inputTitulo.focus();
+                return;
+            }
+
+            contadorId++;
+            var novoCard = criarCardElemento(titulo, prioridade, contadorId);
+            var listaDestino = board.querySelector('.kanban-list[data-status="' + colunaSelecionada + '"]');
+            listaDestino.appendChild(novoCard);
+
+            atualizarContadores();
+
+            inputTitulo.value = "";
+            inputTitulo.classList.remove("is-invalid");
+
+            var modalEl = document.getElementById("modalNovaTarefa");
+            bootstrap.Modal.getInstance(modalEl).hide();
+        });
+
+        document.getElementById("inputTituloTarefa").addEventListener("input", function () {
+            this.classList.remove("is-invalid");
+        });
+
+        atualizarContadores();
+    })();
+</script>

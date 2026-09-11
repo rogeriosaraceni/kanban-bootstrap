@@ -1,0 +1,37 @@
+<div class="modal fade" id="modalNovaTarefa" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nova Tarefa</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Título</label>
+                    <input type="text" class="form-control" id="inputTituloTarefa" placeholder="Ex: Ajustar validação do formulário" />
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Prioridade</label>
+                    <select class="form-select" id="selectPrioridadeTarefa">
+                        <option value="alta">Alta</option>
+                        <option value="media" selected>Média</option>
+                        <option value="baixa">Baixa</option>
+                    </select>
+                </div>
+                <div class="mb-0">
+                    <label class="form-label">Coluna</label>
+                    <select class="form-select" id="selectColunaTarefa">
+                        <option value="todo">A Fazer</option>
+                        <option value="doing">Em Andamento</option>
+                        <option value="review">Em Revisão</option>
+                        <option value="done">Concluído</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" id="btnSalvarTarefa">Adicionar</button>
+            </div>
+        </div>
+    </div>
+</div>
