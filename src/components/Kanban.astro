@@ -239,6 +239,14 @@ import Modal from "./Modal.astro";
         }
     }
 
+    function sanitizarTexto(valor) {
+        if (!valor) return "";
+        if (typeof DOMPurify !== "undefined") {
+            return DOMPurify.sanitize(valor, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] }).trim();
+        }
+        return valor.trim();
+    }
+
     var iconePrioridade = { alta: "text-danger", media: "text-warning", baixa: "text-success" };
     var labelPrioridade = { alta: "Alta", media: "Média", baixa: "Baixa" };
 
@@ -411,7 +419,7 @@ import Modal from "./Modal.astro";
 
     // --- Salvar (funciona tanto pra criar quanto pra editar) ---
     btnSalvar.addEventListener("click", function () {
-        var titulo = inputTitulo.value.trim();
+        var titulo = sanitizarTexto(inputTitulo.value);
         var prioridade = selectPrioridade.value;
         var colunaSelecionada = selectColuna.value;
         var idEmEdicao = inputId.value;

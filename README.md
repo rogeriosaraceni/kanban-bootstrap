@@ -28,6 +28,8 @@ Possui suporte nativo a **Drag & Drop (HTML5)** sem a necessidade de bibliotecas
 - 📱 **Design Responsivo e Moderno:**
   - Tipografia *Plus Jakarta Sans* e ícones com *Bootstrap Icons*.
   - Scroll horizontal fluido para manter a organização em telas menores.
+- 🛡️ **Proteção contra XSS:**
+  - Sanitização automática de inputs do modal com **DOMPurify**, prevenindo a injeção de scripts e tags maliciosas.
 - 🔌 **Pronto para Integração Backend:**
   - Estrutura pronta para disparar requisições assíncronas (REST API, endpoints de persistência, etc.) ao movimentar ou criar cards.
 
@@ -38,6 +40,7 @@ Possui suporte nativo a **Drag & Drop (HTML5)** sem a necessidade de bibliotecas
 - **[Astro](https://astro.build/)** - Framework web moderno focado em performance.
 - **[Bootstrap 5.3](https://getbootstrap.com/)** - Framework CSS para componentes e layout responsivo.
 - **[Bootstrap Icons](https://icons.getbootstrap.com/)** - Conjunto de ícones vetoriais.
+- **[DOMPurify](https://github.com/cure53/DOMPurify)** - Sanitizador de HTML super-rápido e tolerante para proteção contra XSS.
 - **JavaScript Vanilla (ES6+)** - Manipulação de DOM e API nativa de Drag and Drop.
 - **HTML5 & CSS3** - Estruturação e estilizações customizadas.
 
